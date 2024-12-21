@@ -1,0 +1,12 @@
+When ever case is created with origin as email then set status as new and priority as Medium
+
+trigger casePriority on Case (before insert) {
+    if(Trigger.isbefore){
+        for(Case c : Trigger.new){
+            if((c.Origin != null || c.Origin != '') && (c.ContactEmail != null || c.ContactEmail != ' ')){
+                c.Status = 'New';
+                c.Priority = 'Medium';
+            }
+        }
+    }
+}
