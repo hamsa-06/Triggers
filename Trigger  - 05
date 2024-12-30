@@ -1,0 +1,17 @@
+Creates the number of contacts which are equal to the number which we will enter in the number of locations field on the Account Object
+
+trigger NumberOfLocationContact on Account (before insert) {
+    List<Contact> lstOfContact = new List<Contact>();
+        for(Account acc : Trigger.new){
+            if(acc.NumberofLocations__c != NULL && acc.NumberofLocations__c > 0){
+                Integer NoofContact = Integer.valueOf(acc.NumberofLocations__c);
+                 for(Integer i =1;i< NoofContact;i++){
+                	Contact con = new Contact(FirstName = 'Default',LastName = 'Name');
+                	lstOfContact.add(con);
+            	  }
+            }
+        }
+	if(!lstOfContact.isEmpty()){
+    	insert lstOfContact;
+	}
+}
