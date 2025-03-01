@@ -1,0 +1,18 @@
+Create a related Opportunity when an Account is created
+
+trigger OpportunityAccounts on Account (after insert) {
+	List<Opportunity> opptoinsert = new List<Opportunity>();
+    for(Account acc:Trigger.new){
+        Opportunity occ = new Opportunity(
+            Name = acc.name +' opportunity',
+            StageName ='Prospecting',
+            closeDate =Date.today().addDays(30),
+            Amount = 10000,
+            accountId = acc.id
+        );
+        opptoinsert.add(occ);
+    }
+    if(!opptoinsert.isEmpty()){
+        insert opptoinsert;
+    }
+}
