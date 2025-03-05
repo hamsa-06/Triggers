@@ -1,0 +1,16 @@
+Once an Account is inserted an email should go to the System Admin user with specified text below.<br>
+An account has been created and the name is “Account Name”.<br>
+
+trigger MailSendToAccount on Account (after insert) {
+	User usertosend = [SELECT id,Profile.name,Email FROM User where Profile.name = 'System Administrator'];
+    for(Account acc:Trigger.new){
+        if(usertosend.Email!=null){
+            Messaging.SingleEmailMessage mail = new Messaging.SingleEmailMessage();
+            mail.toAddresses = new String[]{usertosend.Email};
+            mail.setSubject('New Account was Created');
+            String body='An Account was Created  and the name is '+acc.Name+'.';
+            mail.setHtmlBody(body);
+            Messaging.sendEmail(new Messaging.SingleEmailMessage[] { mail });
+        }
+    }
+}<
