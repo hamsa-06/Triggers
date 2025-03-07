@@ -1,0 +1,16 @@
+trigger OpportunityUpdate on Opportunity (after update) {
+	List<Task> lstOfTask = new List<Task>();
+    for(Opportunity opp:Trigger.new){
+        Opportunity newmap = Trigger.oldMap.get(opp.Id);
+        if(opp.StageName == 'Closed Won' && newmap.StageName !='Closed Won' && opp.Amount >100000){
+            Task t = new Task();
+            t.subject= 'Follow up the Client';
+            t.WhatId=opp.Id;	
+            t.Status='Not Started';
+            lstOfTask.add(t);
+        }			
+    }
+    if(!lstOfTask.isEmpty()){
+        insert lstOfTask;
+    }
+}
