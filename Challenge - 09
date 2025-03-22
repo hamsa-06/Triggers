@@ -1,0 +1,23 @@
+Trigger On Account When Account is Active Field is updated from 'Yes' to 'No' then check all opportunities associated with the account.Update all Opportunity STage to close Lost if stage not equal to close won.
+trigger AccountTrigger on Account (after insert,after update) {
+	List<Opportunity> oppsToUpdate = new List<Opportunity>();
+    Set<Id> activeAccountIds = new Set<Id>();
+    for(Account acc:Trigger.new){
+        if(acc.Active__c == 'No'){
+            activeAccountIds.add(acc.Id);
+        }
+    }
+    if(!activeAccountIds.isEmpty()){
+        List<Opportunity> opplist = [SELECT Id,StageName From Opportunity WHERE AccountId IN : activeAccountIds];
+        for(Opportunity opp:opplist){
+            if(opp.StageName != 'Close Won'){
+                opp.StageName = 'Close Lost';
+                oppsToUpdate.add(opp);
+            }
+        }
+        if(!oppsToUpdate.isEmpty()){
+            update oppsToUpdate ;
+        }
+    }
+    
+}
