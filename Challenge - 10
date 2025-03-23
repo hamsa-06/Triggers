@@ -1,0 +1,18 @@
+When a Opportunity Stage(Field) is changed,create a Task record on Opportunity and assign it to Logged in User it to Opportunity Owner
+trigger OpportunityTask on Opportunity (after update) {
+    List<Task> taskList = new List<Task>(); 
+    for(Integer i =0;i<Trigger.new.size();i++){
+        Opportunity oldOpp = Trigger.old[i];
+        Opportunity newOpp = Trigger.new[i];
+        if(oldOpp.StageName != newOpp.StageName){
+            Task t = new Task();
+            t.WhatId = newOpp.Id;
+            t.Status ='Not Started';
+            t.Subject ='Follow-up on Opportunity Stage Change';
+            taskList.add(t);
+        }
+    }
+    if(!taskList.isEmpty()){
+        insert taskList;
+    }
+}
