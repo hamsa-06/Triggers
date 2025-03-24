@@ -1,0 +1,26 @@
+If the Account Billing Address is updated then update related contacts mailing address[Using Parent-Child SOQL]
+
+trigger AccountContact on Account (after update) {
+	List<Contact> res = new List<Contact>();
+    for(Account acc : Trigger.new){
+        Account oldacc = Trigger.oldMap.get(acc.Id);
+        if(oldacc.BillingAddress != acc.BillingAddress ||
+            oldacc.BillingCity != acc.BillingCity ||
+            oldacc.BillingCountry != acc.BillingCountry || 
+            oldacc.BillingState != acc.BillingState)
+        {
+             	List<Contact> a = [SELECT Id, MailingAddress, MailingCity, MailingState,MailingCountry 
+                                             FROM Contact WHERE AccountId = :acc.Id];
+                for(Contact con:a){
+                    con.MailingCity = acc.BillingCity;
+                    con.MailingCountry = acc.BillingCountry;
+                    con.MailingState = acc.BillingState;
+                    res.add(con);
+                }            
+   
+        }
+    }
+    if(!res.isEmpty()){
+        update res;
+    }
+}
