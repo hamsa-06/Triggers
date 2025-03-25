@@ -1,0 +1,20 @@
+If the Account Phone is updated then populate the phone number on all related Contacts[Using Map]
+
+trigger AccountPhoneMap on Account (after update) {
+	Map<Id,String> toupdate = new Map<Id,String>();
+    for(Account acc:Trigger.new){
+        Account oldMap = Trigger.oldMap.get(acc.id);
+        if(acc.Phone != oldMap.Phone){
+            toupdate.put(acc.id,acc.Phone);
+        }
+    }
+    if(!toupdate.isEmpty()){
+        List<contact> con = [SELECT id,phone,accountId FROM Contact Where accountId IN :toupdate.keyset()];
+        for(Contact c:con){
+            c.Phone = toupdate.get(c.accountId);
+        }
+        if(!con.isEmpty()){
+            update con;
+        }
+    }
+}
