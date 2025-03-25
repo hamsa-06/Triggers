@@ -1,0 +1,20 @@
+If the Account billing Address is updated then update records contacts mailing address.[Using Map]
+
+trigger AccountContactMap on Account (after update) {
+    Map<id,String> updatetheaddress = new Map<id,String>();
+    for(Account acc:Trigger.new){
+        Account oldacc = Trigger.oldMap.get(acc.Id);
+        if(acc.BillingCity != oldacc.BillingCity){
+        	updatetheaddress.put(acc.id,acc.BillingCity);
+        }
+    }
+    if(!updatetheaddress.isEmpty()){
+         List<Contact> con = [SELECT id,MailingCity FROM Contact Where accountID = :updatetheaddress.keyset()];
+         for(Contact c : con){
+             c.MailingCity = updatetheaddress.get(c.accountId);
+         }
+        if(!con.isEmpty()){
+            update con;
+        }
+    }
+}
