@@ -1,0 +1,25 @@
+If Opportunity Stage is updated upon its creation or update then update description as either 'Opp is Closed Lost' or 'Opp is Closed Won' or 'Opp is open'
+
+trigger OpportunityUpdates on Opportunity (after insert,after update) {
+    List<Opportunity> oppsToUpdate = new List<Opportunity>();
+    for(Opportunity opp:Trigger.new){
+        Opportunity oldOpp = Trigger.oldMap != null ? Trigger.oldMap.get(opp.Id) : null;
+        if(opp.StageName != oldopp.StageName){
+            Opportunity oppToUpdate = new Opportunity(Id = opp.Id);
+            if(opp.StageName == 'Closed Won'){
+                oppToUpdate.Description = 'Opp is Closed Won';
+            }
+            else if(opp.StageName =='Closed Lost'){
+                oppToUpdate.Description = 'Opp is Closed Lost';
+            }
+            else{
+                oppToUpdate.Description = 'Opp is Open';
+            }
+            oppsToUpdate.add(oppToUpdate);
+        }
+    }
+     // Perform a bulk update
+    if (!oppsToUpdate.isEmpty()) {
+        update oppsToUpdate;
+    }
+}
