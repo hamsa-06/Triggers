@@ -1,0 +1,14 @@
+Upon Account Creation or Updation if industry is not null and having value as 'Media' then populate Rating as 'Hot'
+
+trigger AccountCreation on Account (before insert,before update) {
+    for(Account acc:Trigger.new){
+        if(Trigger.isUpdate && acc.Industry != Trigger.oldMap.get(acc.Id).Industry){
+            if(acc.Industry == 'Media'){
+                acc.Rating = 'Hot';
+            }
+        }
+        if (Trigger.isInsert && acc.Industry == 'Media') {
+                acc.Rating = 'Hot';
+        }
+    }
+}
