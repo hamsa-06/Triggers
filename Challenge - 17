@@ -1,0 +1,10 @@
+If the Account Phone is updated ten populate below message in description.Description = Phone number is updated! old Value : XXX & New Value : XXX
+
+trigger AccountAddress on Account (before update) {
+    for(Account acc:Trigger.new){
+        Account oldacc = Trigger.oldmap.get(acc.id);
+        if(Trigger.isupdate && acc.Phone != oldacc.Phone){
+            acc.Description = 'Phone Number is Updated! Old Value : '+oldacc.Phone +' & New Values : '+acc.Phone;
+        }
+    }
+}
