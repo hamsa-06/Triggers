@@ -1,0 +1,35 @@
+On Account cretae 2 checkbox fields labeled as contact and opportunity.Now when a new account record is created and if a particular Contact or Opportunity checkbox is checked then create that related recoorod.Also Opportunity record should be created only if the account record Active picklist is populated with a Yes
+
+trigger AccountContactOppCreation on Account (after insert) {
+    List<Opportunity> oppList = new List<Opportunity>();
+    List<Contact> contactList = new List<Contact>();
+    for(Account a : Trigger.new){
+        if(a.Active__c == 'Yes'){
+            if(a.Opportunity__c){
+                Opportunity o = new Opportunity();
+                o.AccountId = a.Id;
+                o.CloseDate = System.Today().addDays(5);
+                o.Name = 'Trigger Opportunity';
+                o.StageName='Prospecting';
+                o.OwnerId = a.OwnerId;
+                o.Amount = 1000;
+                oppList.add(o);
+            }
+            if(a.Contact__c){
+                if(a.Name!=null){
+                    Contact c = new Contact();
+                    c.AccountId = a.Id;
+                    c.LastName = a.Name;
+                    contactList.add(c);
+                }
+               
+            }
+        }
+    }
+    if(!oppList.isEmpty()){
+        insert oppList;
+    }
+    if(!contactList.isEmpty()){
+        insert contactList;
+    }
+}
