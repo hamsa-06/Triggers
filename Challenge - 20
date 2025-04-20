@@ -1,0 +1,16 @@
+Whenever a record is inserted on account automatically contact should insert
+
+trigger CreateanContactForAccount on Account (after insert) {
+    List<Contact> contactsToInsert = new List<Contact>();
+    for(Account acc:Trigger.new){
+        if(acc.Name !=null){
+            Contact c =new Contact();
+            c.LastName = acc.Name;
+            c.AccountId = acc.Id;
+            contactsToInsert.add(c);
+        }
+    }
+    if(!contactsToInsert.isEmpty()){
+        insert contactsToInsert;
+    }
+}
