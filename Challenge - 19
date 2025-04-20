@@ -1,0 +1,12 @@
+Set up a Custom Fullname field in contact
+
+trigger FullNameTrigger on Contact (before insert) {
+    for(Contact c :Trigger.new){
+        if(c.FirstName != null && c.LastName != null){
+            String fn = c.FirstName;
+            String ln =c.LastName;
+            c.Full_Name__c = fn + ' ' +ln;
+        }
+    }
+  
+}
